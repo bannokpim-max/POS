@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bullish Cafe — POS</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue-deep:   #2563c8;
+    --blue-mid:    #4a8fe8;
+    --blue-soft:   #7ab8f5;
+    --blue-pale:   #c8e3fb;
+    --blue-ghost:  #e8f4fd;
+    --blue-frost:  #f0f8ff;
+    --white:       #ffffff;
+    --ink:         #1a3a6b;
+    --ink-mid:     #3a5a8a;
+    --ink-light:   #7a9abf;
+    --border:      #d0e6f8;
+    --green:       #2d9d6e;
+    --green-bg:    #e6f7f1;
+    --red:         #e04848;
+    --red-bg:      #fde8e8;
+    --yellow-bg:   #fff8e8;
+    --yellow:      #c88a00;
+    --shadow-sm:   0 2px 8px rgba(37,99,200,0.10);
+    --shadow-md:   0 4px 18px rgba(37,99,200,0.14);
+    --shadow-lg:   0 8px 32px rgba(37,99,200,0.18);
+    --radius-sm:   10px;
+    --radius-md:   14px;
+    --radius-lg:   20px;
+    --radius-xl:   28px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sarabun', 'Nunito', sans-serif;
+    background: var(--blue-frost);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ===================== TOP BAR ===================== */
+  .top-bar {
+    background: linear-gradient(135deg, var(--blue-deep) 0%, var(--blue-mid) 100%);
+    color: white;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .top-bar::before {
+    content: '';
+    position: absolute;
+    right: -30px; top: -30px;
+    width: 120px; height: 120px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+  }
+  .top-bar::after {
+    content: '';
+    position: absolute;
+    right: 60px; bottom: -40px;
+    width: 90px; height: 90px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand-logo {
+    width: 38px;
+    height: 38px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    flex-shrink: 0;
+  }
+  .brand-text { line-height: 1.1; }
+  .brand-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+  }
+  .brand-sub {
+    font-size: 10px;
+    opacity: 0.75;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .price-mode-toggle {
+    display: flex;
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .price-mode-toggle button {
+    padding: 4px 12px;
+    border-radius: 16px;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Sarabun', sans-serif;
+    transition: all 0.2s;
+    background: transparent;
+    color: rgba(255,255,255,0.65);
+  }
+  .price-mode-toggle button.active {
+    background: white;
+    color: var(--blue-deep);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+
+  .mode-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .mode-badge.shop { background: var(--green-bg); color: var(--green); }
+  .mode-badge.app  { background: var(--blue-pale); color: var(--blue-deep); }
+
+  .clock-badge {
+    background: rgba(255,255,255,0.18);
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .settings-btn {
+    background: rgba(255,255,255,0.18);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .settings-btn:hover { background: rgba(255,255,255,0.28); }
+
+  /* ===================== LAYOUT ===================== */
+  .menu-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--blue-frost);
+  }
+
+  .order-panel {
+    width: 340px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    border-left: 2px solid var(--border);
+    box-shadow: -4px 0 20px rgba(37,99,200,0.06);
+  }
+
+  /* ===================== CATEGORY BAR ===================== */
+  .category-bar {
+    background: white;
+    padding: 10px 16px;
+    display: flex;
+    gap: 7px;
+    overflow-x: auto;
+    border-bottom: 2px solid var(--border);
+    flex-shrink: 0;
+  }
+  .category-bar::-webkit-scrollbar { height: 0; }
+
+  .cat-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 2px solid var(--border);
+    background: white;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    font-family: 'Sarabun', sans-serif;
+    transition: all 0.15s;
+    color: var(--ink-mid);
+  }
+  .cat-btn.active {
+    background: var(--blue-deep);
+    color: white;
+    border-color: var(--blue-deep);
+    box-shadow: var(--shadow-sm);
+  }
+  .cat-btn:hover:not(.active) {
+    border-color: var(--blue-mid);
+    color: var(--blue-deep);
+    background: var(--blue-ghost);
+  }
+
+  /* ===================== SEARCH ===================== */
+  .search-bar {
+    padding: 10px 16px;
+    background: white;
+    border-bottom: 2px solid var(--border);
+    flex-shrink: 0;
+  }
+  .search-bar input {
+    width: 100%;
+    padding: 9px 14px 9px 38px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 13px;
+    font-family: 'Sarabun', sans-serif;
+    outline: none;
+    background: var(--blue-ghost) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234a8fe8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 12px center;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    color: var(--ink);
+  }
+  .search-bar input:focus {
+    border-color: var(--blue-mid);
+    box-shadow: 0 0 0 3px rgba(74,143,232,0.15);
+    background-color: white;
+  }
+  .search-bar input::placeholder { color: var(--ink-light); }
+
+  /* ===================== ITEM GRID ===================== */
+  .items-grid {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    gap: 10px;
+    align-content: start;
+  }
+  .items-grid::-webkit-scrollbar { width: 5px; }
+  .items-grid::-webkit-scrollbar-track { background: transparent; }
+  .items-grid::-webkit-scrollbar-thumb { background: var(--blue-pale); border-radius: 10px; }
+
+  .item-card {
+    background: white;
+    border-radius: var(--radius-md);
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 2px solid transparent;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+  }
+  .item-card:hover {
+    border-color: var(--blue-mid);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .item-card:active { transform: scale(0.96); }
+
+  .item-cat-badge {
+    font-size: 10px;
+    background: var(--blue-ghost);
+    color: var(--blue-mid);
+    padding: 2px 8px;
+    border-radius: 8px;
+    display: inline-block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    border: 1px solid var(--blue-pale);
+  }
+  .item-cat-badge.food { background: var(--green-bg); color: var(--green); border-color: #b0e6d0; }
+  .item-cat-badge.rice { background: var(--yellow-bg); color: var(--yellow); border-color: #f0d88a; }
+
+  .item-name {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.4;
+    margin-bottom: 8px;
+    min-height: 34px;
+  }
+  .item-price {
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--blue-deep);
+  }
+  .item-price .app-price {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink-light);
+    display: block;
+    margin-top: 1px;
+  }
+
+  /* topping indicator */
+  .topping-dot {
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    opacity: 0.7;
+  }
+
+  /* ===================== ORDER PANEL ===================== */
+  .order-header {
+    padding: 14px 16px 12px;
+    border-bottom: 2px solid var(--border);
+    background: linear-gradient(180deg, var(--blue-ghost) 0%, white 100%);
+  }
+  .order-header-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 10px;
+  }
+  .order-header-title h2 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: 0.3px;
+  }
+  .order-count-badge {
+    background: var(--blue-deep);
+    color: white;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 7px;
+    font-family: 'Nunito', sans-serif;
+    display: none;
+  }
+  .order-count-badge.show { display: inline-block; }
+
+  .order-meta { display: flex; gap: 8px; }
+  .order-meta input, .order-meta select {
+    flex: 1;
+    padding: 8px 10px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 12px;
+    font-family: 'Sarabun', sans-serif;
+    outline: none;
+    color: var(--ink);
+    background: white;
+    transition: border-color 0.15s;
+  }
+  .order-meta input:focus, .order-meta select:focus { border-color: var(--blue-mid); }
+
+  .order-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 14px;
+  }
+  .order-items::-webkit-scrollbar { width: 4px; }
+  .order-items::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  .empty-cart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--ink-light);
+    font-size: 13px;
+    gap: 6px;
+  }
+  .empty-icon {
+    font-size: 44px;
+    opacity: 0.35;
+    filter: grayscale(0.3);
+  }
+  .empty-sub { font-size: 11px; color: var(--blue-soft); }
+
+  .order-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 0;
+    border-bottom: 1.5px solid var(--blue-ghost);
+  }
+  .order-item:last-child { border-bottom: none; }
+
+  .oi-name {
+    flex: 1;
+    font-size: 12.5px;
+    color: var(--ink);
+    line-height: 1.4;
+    font-weight: 500;
+  }
+  .oi-topping-tags {
+    font-size: 10px;
+    color: var(--green);
+    margin-top: 2px;
+    font-weight: 600;
+  }
+
+  .oi-qty {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .oi-qty button {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border);
+    border-radius: 7px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    transition: all 0.1s;
+    color: var(--ink-mid);
+  }
+  .oi-qty button:hover {
+    background: var(--blue-deep);
+    color: white;
+    border-color: var(--blue-deep);
+  }
+  .oi-qty span {
+    width: 22px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    font-family: 'Nunito', sans-serif;
+  }
+  .oi-price {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--blue-deep);
+    min-width: 48px;
+    text-align: right;
+  }
+  .oi-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--border);
+    font-size: 14px;
+    padding: 2px 4px;
+    border-radius: 5px;
+    transition: all 0.1s;
+  }
+  .oi-remove:hover { color: var(--red); background: var(--red-bg); }
+
+  /* ===================== ORDER NOTE ===================== */
+  .order-note { padding: 0 14px 8px; }
+  .order-note input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 12px;
+    font-family: 'Sarabun', sans-serif;
+    outline: none;
+    color: var(--ink-mid);
+    background: var(--blue-ghost);
+    transition: border-color 0.15s;
+  }
+  .order-note input:focus { border-color: var(--blue-mid); background: white; }
+
+  /* ===================== SUMMARY ===================== */
+  .order-summary {
+    padding: 12px 16px;
+    border-top: 2px solid var(--border);
+    background: linear-gradient(180deg, white 0%, var(--blue-ghost) 100%);
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: var(--ink-mid);
+    font-weight: 500;
+  }
+  .summary-row.total {
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--blue-deep);
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 2px dashed var(--blue-pale);
+  }
+
+  .discount-row { display: flex; gap: 6px; margin-bottom: 10px; }
+  .discount-row input {
+    flex: 1;
+    padding: 7px 10px;
+    border: 2px solid var(--border);
+    border-radius: 9px;
+    font-size: 12px;
+    font-family: 'Sarabun', sans-serif;
+    outline: none;
+    color: var(--ink);
+  }
+  .discount-row input:focus { border-color: var(--blue-mid); }
+  .discount-row button {
+    padding: 7px 12px;
+    background: var(--blue-ghost);
+    border: 2px solid var(--border);
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Sarabun', sans-serif;
+    color: var(--ink-mid);
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .discount-row button:hover { background: var(--blue-pale); border-color: var(--blue-mid); }
+
+  /* ===================== PAY BUTTONS ===================== */
+  .pay-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+  .pay-btn {
+    padding: 11px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Sarabun', sans-serif;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+  }
+  .pay-btn:active { transform: scale(0.96); }
+
+  .pay-cash {
+    background: linear-gradient(135deg, var(--blue-deep), var(--blue-mid));
+    color: white;
+    box-shadow: 0 4px 12px rgba(37,99,200,0.3);
+  }
+  .pay-cash:hover { box-shadow: 0 6px 16px rgba(37,99,200,0.4); transform: translateY(-1px); }
+
+  .pay-transfer {
+    background: var(--green-bg);
+    color: var(--green);
+    border: 2px solid #b8e8d0;
+  }
+  .pay-transfer:hover { background: #ccf0e0; }
+
+  .pay-card {
+    background: var(--blue-ghost);
+    color: var(--blue-deep);
+    border: 2px solid var(--blue-pale);
+  }
+  .pay-card:hover { background: var(--blue-pale); }
+
+  .pay-clear {
+    background: var(--red-bg);
+    color: var(--red);
+    border: 2px solid #f8c8c8;
+  }
+  .pay-clear:hover { background: #fcd0d0; }
+
+  /* ===================== MODAL ===================== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,58,107,0.45);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    width: 380px;
+    max-width: 92vw;
+    box-shadow: var(--shadow-lg);
+    border: 2px solid var(--border);
+  }
+  .modal h3 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+  .modal .amount-display {
+    font-family: 'Nunito', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--blue-deep);
+    text-align: center;
+    padding: 14px;
+    background: var(--blue-ghost);
+    border-radius: var(--radius-md);
+    margin-bottom: 14px;
+    border: 2px solid var(--blue-pale);
+  }
+  .modal .change-display {
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 14px;
+    padding: 10px;
+    border-radius: var(--radius-md);
+  }
+  .modal .change-display.positive { background: var(--green-bg); color: var(--green); }
+  .modal .change-display.negative { background: var(--red-bg); color: var(--red); }
+
+  .numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+    margin-bottom: 14px;
+  }
+  .numpad button {
+    padding: 13px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    background: white;
+    cursor: pointer;
+    transition: all 0.1s;
+    color: var(--ink);
+  }
+  .numpad button:hover { background: var(--blue-ghost); border-color: var(--blue-mid); }
+  .numpad button:active { transform: scale(0.94); background: var(--blue-pale); }
+  .numpad .btn-zero { grid-column: span 2; }
+
+  .modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .modal-btns button {
+    padding: 11px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Sarabun', sans-serif;
+    transition: all 0.15s;
+  }
+  .btn-cancel { background: var(--blue-ghost); color: var(--ink-mid); border: 2px solid var(--border); }
+  .btn-cancel:hover { background: var(--blue-pale); }
+  .btn-confirm {
+    background: linear-gradient(135deg, var(--blue-deep), var(--blue-mid));
+    color: white;
+    box-shadow: 0 3px 10px rgba(37,99,200,0.28);
+  }
+  .btn-confirm:hover { box-shadow: 0 5px 14px rgba(37,99,200,0.38); }
+
+  /* ===================== RECEIPT ===================== */
+  .receipt { font-size: 13px; color: var(--ink); }
+  .receipt-header { text-align: center; margin-bottom: 12px; }
+  .receipt-header h3 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--blue-deep);
+  }
+  .receipt-items {
+    border-top: 2px dashed var(--border);
+    border-bottom: 2px dashed var(--border);
+    padding: 8px 0;
+    margin: 8px 0;
+  }
+  .receipt-item { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .receipt-total { font-weight: 800; font-size: 15px; color: var(--blue-deep); }
+  .receipt-thanks { text-align: center; color: var(--ink-light); font-size: 12px; margin-top: 10px; }
+
+  /* ===================== MOBILE TABS ===================== */
+  .mobile-tabs { display: none; }
+
+  @media (max-width: 700px) {
+    body { flex-direction: column; position: relative; }
+
+    .mobile-tabs {
+      display: flex;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: white;
+      border-top: 2px solid var(--border);
+      z-index: 50;
+      height: 58px;
+      box-shadow: 0 -4px 16px rgba(37,99,200,0.10);
+    }
+    .mobile-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 10px;
+      color: var(--ink-light);
+      gap: 2px;
+      transition: all 0.15s;
+    }
+    .mobile-tab .tab-icon { font-size: 22px; }
+    .mobile-tab.active { color: var(--blue-deep); }
+    .mobile-tab.active .tab-icon { transform: scale(1.15); }
+    .cart-badge {
+      background: var(--red);
+      color: white;
+      border-radius: 10px;
+      padding: 1px 5px;
+      font-size: 10px;
+      font-weight: 800;
+      position: absolute;
+      top: 6px;
+      right: calc(50% - 22px);
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .menu-panel { width: 100%; height: calc(100vh - 58px); display: none; flex-direction: column; }
+    .menu-panel.active { display: flex; }
+    .order-panel { width: 100%; height: calc(100vh - 58px); border-left: none; display: none; flex-direction: column; }
+    .order-panel.active { display: flex; }
+
+    .desktop-settings-btn { display: none; }
+    .top-bar { padding: 8px 12px; }
+    .brand-name { font-size: 14px; }
+    .clock-badge { display: none; }
+    .price-mode-toggle button { padding: 3px 8px; font-size: 11px; }
+
+    .items-grid { grid-template-columns: repeat(auto-fill, minmax(138px, 1fr)); gap: 8px; padding: 10px 12px; }
+    .item-card { padding: 10px; }
+    .oi-qty button { width: 28px; height: 28px; font-size: 16px; }
+    .pay-btn { padding: 13px; font-size: 14px; }
+    .modal { width: 95vw; max-height: 90vh; overflow-y: auto; border-radius: var(--radius-lg); }
+    .numpad button { padding: 16px; font-size: 20px; }
+  }
+
+  /* ===================== ADMIN PANEL ===================== */
+  .admin-panel {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--blue-frost);
+    z-index: 200;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .admin-panel.show { display: flex; }
+
+  .admin-top {
+    background: linear-gradient(135deg, var(--blue-deep), var(--blue-mid));
+    color: white;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .admin-top h2 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+  }
+  .admin-close {
+    background: rgba(255,255,255,0.18);
+    border: none;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .admin-close:hover { background: rgba(255,255,255,0.28); }
+
+  .admin-tabs {
+    display: flex;
+    background: white;
+    border-bottom: 2px solid var(--border);
+    flex-shrink: 0;
+  }
+  .admin-tab {
+    flex: 1;
+    padding: 12px 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 13px;
+    color: var(--ink-light);
+    border-bottom: 3px solid transparent;
+    transition: all 0.15s;
+    font-weight: 600;
+  }
+  .admin-tab.active { color: var(--blue-deep); border-bottom-color: var(--blue-deep); }
+
+  .admin-content { flex: 1; overflow-y: auto; padding: 16px; }
+  .admin-section { display: none; }
+  .admin-section.active { display: block; }
+
+  .admin-card {
+    background: white;
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 12px;
+    border: 2px solid var(--border);
+    box-shadow: var(--shadow-sm);
+  }
+  .admin-card h3 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .admin-form-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+  .admin-form-row label { font-size: 12px; color: var(--ink-mid); min-width: 80px; font-weight: 600; }
+  .admin-form-row input, .admin-form-row select {
+    flex: 1;
+    padding: 8px 10px;
+    border: 2px solid var(--border);
+    border-radius: 9px;
+    font-size: 13px;
+    font-family: 'Sarabun', sans-serif;
+    outline: none;
+    color: var(--ink);
+  }
+  .admin-form-row input:focus, .admin-form-row select:focus { border-color: var(--blue-mid); }
+
+  .admin-btn {
+    padding: 9px 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Sarabun', sans-serif;
+    transition: all 0.15s;
+  }
+  .admin-btn:hover { opacity: 0.85; }
+  .admin-btn-primary { background: var(--blue-deep); color: white; box-shadow: 0 3px 10px rgba(37,99,200,0.25); }
+  .admin-btn-danger { background: var(--red-bg); color: var(--red); }
+  .admin-btn-success { background: var(--green-bg); color: var(--green); }
+
+  .admin-list-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1.5px solid var(--blue-ghost);
+  }
+  .admin-list-item:last-child { border-bottom: none; }
+  .admin-list-info { flex: 1; }
+  .admin-list-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .admin-list-sub { font-size: 11px; color: var(--ink-light); margin-top: 2px; }
+  .admin-list-price {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--blue-deep);
+    min-width: 80px;
+    text-align: right;
+  }
+
+  .topping-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1.5px solid var(--blue-ghost);
+  }
+  .topping-item:last-child { border-bottom: none; }
+  .topping-name { flex: 1; font-size: 13px; color: var(--ink); font-weight: 500; }
+  .topping-price { font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; color: var(--blue-deep); min-width: 60px; text-align: right; }
+
+  /* ===================== TOPPING MODAL ===================== */
+  .topping-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,58,107,0.45);
+    backdrop-filter: blur(4px);
+    z-index: 300;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .topping-modal.show { display: flex; }
+
+  .topping-sheet {
+    background: white;
+    border-radius: 24px 24px 0 0;
+    padding: 22px 20px 24px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 72vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+  }
+  .topping-sheet-handle {
+    width: 40px; height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    margin: 0 auto 16px;
+  }
+  .topping-sheet h3 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .topping-sheet .sub { font-size: 12px; color: var(--ink-light); margin-bottom: 14px; }
+
+  .topping-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.1s;
+    margin-bottom: 4px;
+    border: 2px solid transparent;
+  }
+  .topping-option:hover { background: var(--blue-ghost); border-color: var(--blue-pale); }
+  .topping-option:has(input:checked) { background: var(--blue-ghost); border-color: var(--blue-mid); }
+
+  .topping-option input[type=checkbox] {
+    width: 18px; height: 18px;
+    cursor: pointer;
+    accent-color: var(--blue-deep);
+  }
+  .topping-option-name { flex: 1; font-size: 14px; color: var(--ink); font-weight: 500; }
+  .topping-option-price { font-family: 'Nunito', sans-serif; font-size: 13px; color: var(--ink-light); font-weight: 600; }
+  .topping-option-price.paid { color: var(--blue-deep); }
+
+  .topping-confirm {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--blue-deep), var(--blue-mid));
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 16px;
+    box-shadow: 0 4px 14px rgba(37,99,200,0.3);
+    letter-spacing: 0.3px;
+    transition: all 0.15s;
+  }
+  .topping-confirm:hover { box-shadow: 0 6px 18px rgba(37,99,200,0.4); transform: translateY(-1px); }
+
+  /* cash input display */
+  #cashInput {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--ink);
+    margin-bottom: 12px;
+    min-height: 50px;
+    background: var(--blue-ghost);
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== MENU PANEL ==================== -->
+<div class="menu-panel">
+  <div class="top-bar">
+    <div class="brand">
+      <div class="brand-logo">🐄</div>
+      <div class="brand-text">
+        <div class="brand-name">BULLISH CAFE <span class="mode-badge shop" id="modeBadge">หน้าร้าน</span></div>
+        <div class="brand-sub">Healthy Coffee Time · POS</div>
+      </div>
+    </div>
+    <div class="top-bar-right">
+      <div class="price-mode-toggle">
+        <button id="btnShop" class="active" onclick="setPriceMode('shop')">🏪 ร้าน</button>
+        <button id="btnApp" onclick="setPriceMode('app')">📱 แอป</button>
+      </div>
+      <div class="clock-badge" id="clock"></div>
+      <button class="settings-btn desktop-settings-btn" onclick="openAdmin()" title="ตั้งค่า">⚙️</button>
+    </div>
+  </div>
+
+  <div class="category-bar" id="categoryBar"></div>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="ค้นหาเมนู..." oninput="filterItems()">
+  </div>
+
+  <div class="items-grid" id="itemsGrid"></div>
+</div>
+
+<!-- ==================== ORDER PANEL ==================== -->
+<div class="order-panel">
+  <div class="order-header">
+    <div class="order-header-title">
+      <h2>🧾 รายการสั่ง</h2>
+      <span class="order-count-badge" id="orderCountBadge">0</span>
+    </div>
+    <div class="order-meta">
+      <input type="text" id="tableNum" placeholder="โต๊ะ / ชื่อลูกค้า">
+      <select id="orderType" onchange="onOrderTypeChange()">
+        <option value="shop_eat">🏪 ทานที่ร้าน</option>
+        <option value="shop_take">🏪 กลับบ้าน</option>
+        <option value="app_grab">📱 Grab</option>
+        <option value="app_foodpanda">📱 Foodpanda</option>
+        <option value="app_line">📱 Line Man</option>
+        <option value="app_other">📱 แอปอื่น</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="order-items" id="orderItems">
+    <div class="empty-cart">
+      <div class="empty-icon">🛒</div>
+      <div>ยังไม่มีรายการ</div>
+      <div class="empty-sub">กดเมนูเพื่อเพิ่มออเดอร์</div>
+    </div>
+  </div>
+
+  <div class="order-note">
+    <input type="text" id="orderNote" placeholder="📝 หมายเหตุ / รายละเอียดเพิ่มเติม...">
+  </div>
+
+  <div class="order-summary">
+    <div class="summary-row"><span>ยอดรวม</span><span id="subtotal">฿0</span></div>
+    <div class="discount-row">
+      <input type="number" id="discountInput" placeholder="ส่วนลด (บาท)" min="0">
+      <button onclick="applyDiscount()">ใช้</button>
+    </div>
+    <div class="summary-row"><span>ส่วนลด</span><span id="discountAmt" style="color:var(--red);">-฿0</span></div>
+    <div class="summary-row total"><span>ยอดสุทธิ</span><span id="totalAmt">฿0</span></div>
+    <div class="pay-buttons">
+      <button class="pay-btn pay-cash" onclick="openPayModal('เงินสด')">💵 เงินสด</button>
+      <button class="pay-btn pay-transfer" onclick="openPayModal('โอนเงิน')">📱 โอนเงิน</button>
+      <button class="pay-btn pay-card" onclick="openPayModal('บัตรเครดิต')">💳 บัตร</button>
+      <button class="pay-btn pay-clear" onclick="clearOrder()">🗑 ล้าง</button>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile tab bar -->
+<div class="mobile-tabs">
+  <button class="mobile-tab active" id="tabMenu" onclick="switchTab('menu')">
+    <span class="tab-icon">🍽</span>
+    <span>เมนู</span>
+  </button>
+  <button class="mobile-tab" id="tabOrder" onclick="switchTab('order')">
+    <span class="tab-icon">🧾</span>
+    <span id="tabOrderLabel">ออเดอร์</span>
+    <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+  </button>
+  <button class="mobile-tab" onclick="openRefundModal()">
+    <span class="tab-icon">↩️</span>
+    <span>คืนเงิน</span>
+  </button>
+  <button class="mobile-tab" onclick="openAdmin()">
+    <span class="tab-icon">⚙️</span>
+    <span>ตั้งค่า</span>
+  </button>
+</div>
+
+<!-- Payment modal -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal">
+    <h3 id="payModalTitle">💳 ชำระเงิน</h3>
+    <div class="amount-display">ยอดรวม: <span id="payTotalDisp">฿0</span></div>
+    <div style="margin-bottom:8px;font-size:13px;color:var(--ink-mid);font-weight:600;">รับเงิน (บาท)</div>
+    <div id="cashInput">0</div>
+    <div class="numpad">
+      <button onclick="numpadPress('1')">1</button><button onclick="numpadPress('2')">2</button><button onclick="numpadPress('3')">3</button>
+      <button onclick="numpadPress('4')">4</button><button onclick="numpadPress('5')">5</button><button onclick="numpadPress('6')">6</button>
+      <button onclick="numpadPress('7')">7</button><button onclick="numpadPress('8')">8</button><button onclick="numpadPress('9')">9</button>
+      <button onclick="numpadPress('back')">⌫</button><button class="btn-zero" onclick="numpadPress('0')">0</button>
+    </div>
+    <div class="change-display" id="changeDisplay">เงินทอน: ฿0</div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closePayModal()">ยกเลิก</button>
+      <button class="btn-confirm" onclick="confirmPayment()">✓ ยืนยัน</button>
+    </div>
+  </div>
+</div>
+
+<!-- Receipt modal -->
+<div class="modal-overlay" id="receiptModal">
+  <div class="modal">
+    <div class="receipt" id="receiptContent"></div>
+    <div class="modal-btns" style="margin-top:16px;">
+      <button class="btn-cancel" onclick="closeReceiptModal()">ปิด</button>
+      <button class="btn-confirm" onclick="printReceipt()">🖨 พิมพ์</button>
+    </div>
+  </div>
+</div>
+
+<!-- Refund Modal -->
+<div class="modal-overlay" id="refundModal" style="display:none;align-items:flex-start;padding-top:40px;">
+  <div class="modal" style="max-height:80vh;overflow-y:auto;width:100%;max-width:420px;">
+    <h3 style="font-size:16px;font-weight:800;margin-bottom:4px;">↩️ ยกเลิก / คืนเงิน</h3>
+    <p style="font-size:12px;color:var(--ink-light);margin-bottom:14px;">เลือกออเดอร์ที่ต้องการยกเลิก</p>
+    <div id="refundList" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div style="margin-top:16px;">
+      <button class="btn-cancel" style="width:100%;" onclick="closeRefundModal()">ปิด</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcbSHm9bIJUMSmWFTjxHWX4khlUG19_2dLWf3ZEuQR-oEf6YQ_9Q_fJCJooWUgThQz/exec';
+
+async function loadStockFromSheets() {
+  try {
+    const res = await fetch(APPS_SCRIPT_URL + '?action=getStock');
+    const data = await res.json();
+    if (data.success) {
+      Object.values(data.stock).forEach(stockItem => {
+        const menuItem = MENU.find(m => m.id == stockItem.id);
+        if (menuItem) { menuItem.available = stockItem.available; menuItem.stock = stockItem.stock; }
+      });
+      filterItems();
+    }
+  } catch (err) { console.warn('โหลดสต็อกไม่ได้:', err); }
+}
+
+async function syncOrderToSheets(orderData) {
+  try {
+    await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'saveOrder', ...orderData }) });
+  } catch (err) { console.warn('Sync ไม่ได้:', err); }
+}
+
+const MENU = [
+  {id:1,name:'ข้าวไรซ์ลาบแซลม่อนคลีน',price:99,priceApp:149,cat:'อาหารคลีน'},
+  {id:2,name:'บะหมี่ผักลาบแซลม่อนคลีน',price:105,priceApp:158,cat:'อาหารคลีน'},
+  {id:3,name:'ข้าวไรซ์ยำแซลม่อนคลีน',price:99,priceApp:149,cat:'อาหารคลีน'},
+  {id:4,name:'บะหมี่ผัก ยำแซลม่อนคลีน',price:105,priceApp:158,cat:'อาหารคลีน'},
+  {id:5,name:'ข้าวไรซ์ยำกุ้งคลีน',price:89,priceApp:134,cat:'อาหารคลีน'},
+  {id:6,name:'บะหมี่ผัก ยำกุ้งคลีน',price:95,priceApp:143,cat:'อาหารคลีน'},
+  {id:7,name:'ข้าวไรซ์ลาบกุ้งคลีน',price:89,priceApp:134,cat:'อาหารคลีน'},
+  {id:8,name:'สปาเก็ตตี้โฮลวีทอกไก่พริกไทยดำ',price:79,priceApp:118,cat:'อาหารคลีน'},
+  {id:9,name:'สปาเก็ตตี้ปลาดอลลี่พริกไทยดำ',price:89,priceApp:128,cat:'อาหารคลีน'},
+  {id:10,name:'ข้าวไรซ์แกงส้มปลาดอลลี่',price:128,priceApp:128,cat:'อาหารคลีน'},
+  {id:11,name:'ข้าวไรซ์คั่วกลิ้งอกไก่',price:89,priceApp:118,cat:'อาหารคลีน'},
+  {id:12,name:'Whole Wheat Tortilla Chicken Wrap',price:89,priceApp:125,cat:'อาหารคลีน'},
+  {id:13,name:'Whole Wheat Wrap อกไก่ย่างน้ำสลัดเลม่อน',price:99,priceApp:149,cat:'อาหารคลีน'},
+  {id:14,name:'ยำบะหมี่ผักอกไก่ฉีกคลีน',price:90,priceApp:90,cat:'อาหารคลีน'},
+  {id:15,name:'ข้าวไรซ์อกไก่ผัดกิมจิคลีน',price:79,priceApp:118,cat:'อาหารคลีน'},
+  {id:16,name:'ไก่โคชูจัง+ข้าวไรซ์เบอร์รี่+มินิสลัด',price:79,priceApp:79,cat:'อาหารคลีน'},
+  {id:17,name:'ข้าวไรซ์อกไก่ผัดพริกไทยดำ',price:79,priceApp:118,cat:'อาหารคลีน'},
+  {id:18,name:'ข้าวไรซ์ปลาดอลลี่ผัดพริกไทยดำ',price:89,priceApp:128,cat:'อาหารคลีน'},
+  {id:19,name:'ข้าวไรซ์อกไก่ย่าง+ผักอบ+น้ำสลัดครีมเลม่อน',price:79,priceApp:115,cat:'อาหารคลีน'},
+  {id:20,name:'Chicken Breast Salad with Lemon Dressing',price:95,priceApp:95,cat:'อาหารคลีน'},
+  {id:21,name:'ข้าวไรซ์เบอร์รี่อกไก่ยำมะม่วง',price:79,priceApp:118,cat:'อาหารคลีน'},
+  {id:22,name:'สุกี้แห้งอกไก่น้ำจิ้มสุกี้คลีน',price:79,priceApp:118,cat:'อาหารคลีน'},
+  {id:23,name:'ข้าวไรซ์+อกไก่ผัดพริกแกงใบโหรพา',price:79,priceApp:118,cat:'อาหารคลีน'},
+  {id:24,name:'บะหมี่ผัก แซลมอนเทอริยากิ',price:105,priceApp:158,cat:'อาหารคลีน'},
+  {id:25,name:'ข้าวไรซ์ลาบปลาดุกย่างคลีน',price:79,priceApp:119,cat:'อาหารคลีน'},
+  {id:26,name:'ข้าวไรซ์ปลาดุกย่างจิ้มแจ่ว',price:69,priceApp:104,cat:'อาหารคลีน'},
+  {id:27,name:'ข้าวไรซ์อกไก่นุ่มเทริยากิ homemade ย่าง',price:79,priceApp:79,cat:'อาหารคลีน'},
+  {id:28,name:'บะหมี่ผักอกไก่นุ่มเทริยากิ homemade ย่าง',price:85,priceApp:85,cat:'อาหารคลีน'},
+  {id:29,name:'ข้าวไรซ์ลาบอกไก่ย่าง',price:79,priceApp:118,cat:'อาหารคลีน'},
+  {id:30,name:'สุกี้โรลอกไก่+น้ำจิ้มสุกี้คลีน',price:65,priceApp:70,cat:'อาหารคลีน'},
+  {id:31,name:'ข้าวไรซ์เบอรี่ไก่ย่าง+น้ำจิ้มแจ่วรส',price:65,priceApp:65,cat:'อาหารคลีน'},
+  {id:32,name:'ข้าวไรซ์อกไก่ย่าง+ผักอบ',price:79,priceApp:115,cat:'อาหารคลีน'},
+  {id:40,name:'เหนียวหมูฉีก (มี3หมูเลยน้ำ; หมูปิ้ง หมูฝอย หมูหยอง)',price:60,priceApp:60,cat:'ข้าวราด'},
+  {id:41,name:'ยำปลาดุกฟู',price:100,priceApp:100,cat:'ข้าวราด'},
+  {id:42,name:'ยำ 3 กรอบ',price:100,priceApp:100,cat:'ข้าวราด'},
+  {id:43,name:'ขนมจีนน้ำยาปลากระพงปักษ์ใต้',price:100,priceApp:100,cat:'ข้าวราด'},
+  {id:44,name:'ไข่กระทะ (ไข่ 1 ฟอง)',price:64,priceApp:64,cat:'ข้าวราด'},
+  {id:45,name:'ข้าวหน้าไก่ (ไม่คลีน)',price:40,priceApp:69,cat:'ข้าวราด'},
+  {id:46,name:'ข้าวหน้าไก่เทอริยากิ (ไม่คลีน)',price:45,priceApp:79,cat:'ข้าวราด'},
+  {id:50,name:'Sandwich (grill)',price:75,priceApp:85,cat:'Sandwich & Toast'},
+  {id:51,name:'Egg toast (2 ชิ้น)',price:55,priceApp:67,cat:'Sandwich & Toast'},
+  {id:52,name:'แซนวิชสามเหลี่ยม',price:45,priceApp:55,cat:'Sandwich & Toast'},
+  {id:60,name:'ปังปิ้ง เนยนม - 1แผ่น',price:25,priceApp:37,cat:'ปังปิ้ง'},
+  {id:61,name:'เนยนมน้ำตาล 1 แผ่น',price:25,priceApp:44,cat:'ปังปิ้ง'},
+  {id:62,name:'เนยนม โอวัลติน 1 แผ่น',price:30,priceApp:49,cat:'ปังปิ้ง'},
+  {id:63,name:'เนยนมไวท์มอลล์ 1 แผ่น',price:30,priceApp:49,cat:'ปังปิ้ง'},
+  {id:64,name:'ปังปิ้งนูเทลล่า 1 แผ่น',price:35,priceApp:49,cat:'ปังปิ้ง'},
+  {id:65,name:'ปังปิ้ง แยมเชอร์รี่ 1 แผ่น',price:30,priceApp:49,cat:'ปังปิ้ง'},
+  {id:66,name:'ปังปิ้งพีนัทบัตเตอร์-นม 1 แผ่น',price:35,priceApp:49,cat:'ปังปิ้ง'},
+  {id:70,name:'ข้าวหอมมะลิผสมข้าวไรซ์เบอร์รี่',price:15,priceApp:22,cat:'เพิ่มเติม'},
+  {id:71,name:'ไข่ต้ม',price:10,priceApp:15,cat:'เพิ่มเติม'},
+  {id:72,name:'น้ำจิ้มสุกี้',price:10,priceApp:10,cat:'เพิ่มเติม'},
+  {id:73,name:'น้ำจิ้มแจ่ว',price:10,priceApp:10,cat:'เพิ่มเติม'},
+  {id:74,name:'น้ำสลัดเลม่อน',price:20,priceApp:20,cat:'เพิ่มเติม'},
+  {id:75,name:'ซอสมะเขือเทศ',price:5,priceApp:5,cat:'เพิ่มเติม'},
+  {id:76,name:'ซอสเทริยากิ',price:10,priceApp:10,cat:'เพิ่มเติม'},
+  {id:80,name:'อเมริกาโน',price:45,priceApp:67,cat:'Americano'},
+  {id:81,name:'อเมริกาโนน้ำผึ้งดอยคำ',price:55,priceApp:82,cat:'Americano'},
+  {id:82,name:'อเมริกาโนยูซุ premium puree',price:60,priceApp:90,cat:'Americano'},
+  {id:83,name:'อเมริกาโนลิ้นจี่ premium syrup',price:65,priceApp:97,cat:'Americano'},
+  {id:84,name:'อเมริกาโนมะนาวสด',price:55,priceApp:90,cat:'Americano'},
+  {id:85,name:'อเมริกาโนน้ำผึ้งมะนาว',price:65,priceApp:97,cat:'Americano'},
+  {id:86,name:'อเมริกาโนมะพร้าวเผา',price:65,priceApp:97,cat:'Americano'},
+  {id:87,name:'อเมริกาโนน้ำส้มคั้นสด',price:65,priceApp:97,cat:'Americano'},
+  {id:90,name:'เอสเปรสโซ',price:50,priceApp:50,cat:'Coffee+Milk'},
+  {id:91,name:'ลาเต้',price:55,priceApp:55,cat:'Coffee+Milk'},
+  {id:92,name:'คาปูชิโน',price:55,priceApp:55,cat:'Coffee+Milk'},
+  {id:93,name:'มอคค่า',price:55,priceApp:55,cat:'Coffee+Milk'},
+  {id:94,name:'คาราเมลมัคคิอาโต',price:60,priceApp:60,cat:'Coffee+Milk'},
+  {id:95,name:'บูลลิชมะพร้าวเผามัคคิอาโต (22 oz)',price:85,priceApp:85,cat:'Coffee+Milk'},
+  {id:100,name:'Espresso Frappe',price:65,priceApp:98,cat:'Frappe'},
+  {id:101,name:'Cappuccino Frappe',price:70,priceApp:105,cat:'Frappe'},
+  {id:102,name:'Latte Frappe',price:70,priceApp:105,cat:'Frappe'},
+  {id:103,name:'Mocha Frappe',price:70,priceApp:105,cat:'Frappe'},
+  {id:104,name:'Americano Frappe',price:60,priceApp:90,cat:'Frappe'},
+  {id:105,name:'Americano Burnt Coconut Frappe',price:100,priceApp:120,cat:'Frappe'},
+  {id:106,name:'Caramel Macchiato Frappe',price:75,priceApp:113,cat:'Frappe'},
+  {id:107,name:'นมสดปั่น',price:60,priceApp:90,cat:'Frappe'},
+  {id:108,name:'นมชมพูปั่น',price:65,priceApp:98,cat:'Frappe'},
+  {id:109,name:'นมสดคาราเมลปั่น',price:65,priceApp:98,cat:'Frappe'},
+  {id:110,name:'นมสดวานิลาปั่น',price:75,priceApp:98,cat:'Frappe'},
+  {id:111,name:'นมสดชีสเค้ก ปั่น',price:75,priceApp:113,cat:'Frappe'},
+  {id:112,name:'โกโก้พรีเมี่ยมปั่น',price:70,priceApp:105,cat:'Frappe'},
+  {id:113,name:'Super Ovaltine Frappe',price:70,priceApp:105,cat:'Frappe'},
+  {id:114,name:'ไวท์มอลล์ปั่น',price:70,priceApp:105,cat:'Frappe'},
+  {id:115,name:'ชาไทยปั่น',price:65,priceApp:98,cat:'Frappe'},
+  {id:116,name:'ชาเขียวมัทฉะปั่น',price:75,priceApp:112,cat:'Frappe'},
+  {id:117,name:'Earl Greyนมสดปั่น',price:90,priceApp:135,cat:'Frappe'},
+  {id:118,name:'ช็อคโกบานาน่า (22oz)',price:75,priceApp:105,cat:'Frappe'},
+  {id:120,name:'นมสด',price:45,priceApp:45,cat:'Fresh Milk'},
+  {id:121,name:'นมสดคาราเมล premium syrup',price:50,priceApp:50,cat:'Fresh Milk'},
+  {id:122,name:'นมสดวานิลา premium syrup',price:60,priceApp:50,cat:'Fresh Milk'},
+  {id:123,name:'นมสดไอศกรีมวานิลา French premium syrup',price:60,priceApp:60,cat:'Fresh Milk'},
+  {id:124,name:'นมชมพู',price:50,priceApp:75,cat:'Fresh Milk'},
+  {id:125,name:'นมสดชีสเค้ก premium syrup',price:60,priceApp:60,cat:'Fresh Milk'},
+  {id:130,name:'ชาไทย',price:50,priceApp:50,cat:'Tea with milk'},
+  {id:131,name:'ชาเขียวมัทฉะ',price:60,priceApp:60,cat:'Tea with milk'},
+  {id:132,name:'บูลลิชมะพร้าวเผามัทฉะ (22oz)',price:85,priceApp:125,cat:'Tea with milk'},
+  {id:140,name:'ชาเขียวมัทฉะใส',price:45,priceApp:60,cat:'Tea'},
+  {id:141,name:'ชามะนาว (น้ำมะนาวสด)',price:50,priceApp:70,cat:'Tea'},
+  {id:142,name:'มัทฉะยูซุโซดา',price:75,priceApp:95,cat:'Tea'},
+  {id:143,name:'มัทฉะน้ำผึ้งมะนาวโซดา',price:75,priceApp:85,cat:'Tea'},
+  {id:144,name:'Twinning tea',price:55,priceApp:75,cat:'Tea'},
+  {id:145,name:'มัทฉะมะพร้าวเผา',price:65,priceApp:97,cat:'Tea'},
+  {id:150,name:'โกโก้พรีเมี่ยม',price:55,priceApp:55,cat:'Cocoa and Malt'},
+  {id:151,name:'Super Ovaltine',price:55,priceApp:55,cat:'Cocoa and Malt'},
+  {id:152,name:'ไวท์มอลล์',price:55,priceApp:55,cat:'Cocoa and Malt'},
+  {id:160,name:'แดงโซดา',price:50,priceApp:60,cat:'Italian soda'},
+  {id:161,name:'แดงมะนาวโซดา (มะนาวสด)',price:50,priceApp:65,cat:'Italian soda'},
+  {id:162,name:'ยูซุเลม่อนโซดา (premium puree)',price:55,priceApp:75,cat:'Italian soda'},
+  {id:163,name:'มะนาวโซดา (มะนาวสด)',price:55,priceApp:75,cat:'Italian soda'},
+  {id:164,name:'น้ำผึ้งมะนาวโซดา',price:55,priceApp:75,cat:'Italian soda'},
+  {id:165,name:'สตรอว์เบอรี่โซดา (premium puree)',price:55,priceApp:75,cat:'Italian soda'},
+  {id:170,name:'Strawberry Smoothie นัวๆเข้มๆ',price:70,priceApp:97,cat:'Juice & Smoothie'},
+  {id:171,name:'Strawberry & Yogurt Smoothie',price:75,priceApp:110,cat:'Juice & Smoothie'},
+  {id:172,name:'Mix Berry Smoothie นัวๆเข้มๆ',price:70,priceApp:97,cat:'Juice & Smoothie'},
+  {id:173,name:'Mix Berry & Yogurt Smoothie',price:75,priceApp:75,cat:'Juice & Smoothie'},
+  {id:174,name:'สลัดมันฝรั่ง',price:59,priceApp:89,cat:'อาหารคลีน'},
+  {id:175,name:'ข้าวไรซ์แซลม่อนเทริยากิโลว์แคล',price:99,priceApp:149,cat:'อาหารคลีน'},
+];
+
+const TOPPINGS_DATA = [
+  {name:'กวางตุ้ง',priceShop:5,priceApp:10},
+  {name:'กะหล่ำปลี',priceShop:5,priceApp:10},
+  {name:'แครอท',priceShop:5,priceApp:10},
+  {name:'มันฝรั่ง',priceShop:5,priceApp:10},
+  {name:'หอมใหญ่',priceShop:5,priceApp:10},
+  {name:'มะเขือเทศ',priceShop:5,priceApp:10},
+  {name:'ฟักทอง',priceShop:5,priceApp:10},
+  {name:'ผักสลัด',priceShop:5,priceApp:10},
+  {name:'บรอกโคลี',priceShop:5,priceApp:10},
+  {name:'ไข่ต้ม',priceShop:10,priceApp:15},
+  {name:'ข้าวไรซ์',priceShop:5,priceApp:10},
+  {name:'น้ำจิ้มสุกี้',priceShop:5,priceApp:10},
+  {name:'น้ำจิ้มแจ่ว',priceShop:5,priceApp:10},
+  {name:'ซอสเทริยากิ',priceShop:5,priceApp:10},
+  {name:'น้ำสลัดเลม่อน',priceShop:15,priceApp:20}
+];
+
+const CATEGORIES = ['ทั้งหมด', ...new Set(MENU.map(i => i.cat))];
+const FOOD_CATS = ['อาหารคลีน','ข้าวราด'];
+
+let cart = [];
+let currentCat = 'ทั้งหมด';
+let discount = 0;
+let cashEntered = '0';
+let currentPayMethod = '';
+let orderCounter = 1;
+let priceMode = 'shop';
+let pendingCartItem = null;
+let toppings = [];
+
+function setPriceMode(mode) {
+  priceMode = mode;
+  document.getElementById('btnShop').className = mode === 'shop' ? 'active' : '';
+  document.getElementById('btnApp').className = mode === 'app' ? 'active' : '';
+  const badge = document.getElementById('modeBadge');
+  badge.textContent = mode === 'shop' ? 'หน้าร้าน' : 'แอป';
+  badge.className = 'mode-badge ' + mode;
+  const sel = document.getElementById('orderType');
+  if (mode === 'shop' && sel.value.startsWith('app_')) sel.value = 'shop_eat';
+  if (mode === 'app' && sel.value.startsWith('shop_')) sel.value = 'app_grab';
+  renderItems(getCurrentMenuItems());
+  renderCart();
+}
+
+function onOrderTypeChange() {
+  const val = document.getElementById('orderType').value;
+  if (val.startsWith('app_') && priceMode !== 'app') setPriceMode('app');
+  if (val.startsWith('shop_') && priceMode !== 'shop') setPriceMode('shop');
+}
+
+function getItemPrice(item) {
+  return (priceMode === 'app' && item.priceApp) ? item.priceApp : item.price;
+}
+
+function getCurrentMenuItems() {
+  const q = document.getElementById('searchInput') ? document.getElementById('searchInput').value.toLowerCase() : '';
+  let items = MENU;
+  if (currentCat !== 'ทั้งหมด') items = items.filter(i => i.cat === currentCat);
+  if (q) items = items.filter(i => i.name.toLowerCase().includes(q) || i.cat.toLowerCase().includes(q));
+  return items;
+}
+
+function init() {
+  const bar = document.getElementById('categoryBar');
+  CATEGORIES.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn' + (cat === 'ทั้งหมด' ? ' active' : '');
+    btn.textContent = cat;
+    btn.onclick = () => {
+      currentCat = cat;
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterItems();
+    };
+    bar.appendChild(btn);
+  });
+  renderItems(MENU);
+  updateClock();
+  setInterval(updateClock, 1000);
+  loadStockFromSheets();
+  if (window.innerWidth <= 700) {
+    document.querySelector('.menu-panel').classList.add('active');
+  }
+}
+
+function updateClock() {
+  const now = new Date();
+  const el = document.getElementById('clock');
+  if (el) el.textContent = now.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit'});
+}
+
+function filterItems() { renderItems(getCurrentMenuItems()); }
+
+function getCatBadgeClass(cat) {
+  if (FOOD_CATS.includes(cat)) return cat === 'อาหารคลีน' ? 'food' : 'rice';
+  return '';
+}
+
+function renderItems(items) {
+  const grid = document.getElementById('itemsGrid');
+  grid.innerHTML = items.map(item => {
+    const p = getItemPrice(item);
+    const hasTwo = item.priceApp && item.priceApp !== item.price;
+    const isFood = FOOD_CATS.includes(item.cat);
+    const badgeClass = getCatBadgeClass(item.cat);
+    const priceHtml = hasTwo
+      ? `<div class="item-price">฿${p}<span class="app-price">${priceMode==='shop'?'แอป ฿'+item.priceApp:'ร้าน ฿'+item.price}</span></div>`
+      : `<div class="item-price">฿${p}</div>`;
+    return `
+    <div class="item-card" onclick="addToCart(${item.id})">
+      ${isFood ? '<div class="topping-dot"></div>' : ''}
+      <div class="item-cat-badge ${badgeClass}">${item.cat}</div>
+      <div class="item-name">${item.name}</div>
+      ${priceHtml}
+    </div>`;
+  }).join('');
+}
+
+function changeQty(cartIdx, delta) {
+  if (cartIdx < 0 || cartIdx >= cart.length) return;
+  cart[cartIdx].qty += delta;
+  if (cart[cartIdx].qty <= 0) cart.splice(cartIdx, 1);
+  renderCart();
+}
+
+function removeItem(cartIdx) {
+  cart.splice(cartIdx, 1);
+  renderCart();
+}
+
+function renderCart() {
+  const container = document.getElementById('orderItems');
+  if (cart.length === 0) {
+    container.innerHTML = `<div class="empty-cart"><div class="empty-icon">🛒</div><div>ยังไม่มีรายการ</div><div class="empty-sub">กดเมนูเพื่อเพิ่มออเดอร์</div></div>`;
+  } else {
+    container.innerHTML = cart.map((item, idx) => `
+      <div class="order-item">
+        <div class="oi-name">${item.name}${item.toppings&&item.toppings.length?`<div class="oi-topping-tags">🌿 ${item.toppings.map(t=>t.name+(t.price>0?' (+฿'+t.price+')':'')).join(', ')}</div>`:''}
+        </div>
+        <div class="oi-qty">
+          <button onclick="changeQty(${idx}, -1)">−</button>
+          <span>${item.qty}</span>
+          <button onclick="changeQty(${idx}, 1)">+</button>
+        </div>
+        <div class="oi-price">฿${item.unitPrice * item.qty}</div>
+        <button class="oi-remove" onclick="removeItem(${idx})">✕</button>
+      </div>
+    `).join('');
+  }
+  updateSummary();
+  updateCartBadge();
+}
+
+function applyDiscount() {
+  discount = parseFloat(document.getElementById('discountInput').value) || 0;
+  updateSummary();
+}
+
+function getSubtotal() { return cart.reduce((s, i) => s + (i.unitPrice || i.price) * i.qty, 0); }
+function getTotal() { return Math.max(0, getSubtotal() - discount); }
+
+function updateSummary() {
+  document.getElementById('subtotal').textContent = '฿' + getSubtotal();
+  document.getElementById('discountAmt').textContent = '-฿' + discount;
+  document.getElementById('totalAmt').textContent = '฿' + getTotal();
+  const badge = document.getElementById('orderCountBadge');
+  const total = cart.reduce((s, i) => s + i.qty, 0);
+  badge.textContent = total;
+  badge.classList.toggle('show', total > 0);
+}
+
+function clearOrder() {
+  if (cart.length === 0) return;
+  if (!confirm('ล้างรายการทั้งหมด?')) return;
+  cart = []; discount = 0;
+  document.getElementById('discountInput').value = '';
+  document.getElementById('tableNum').value = '';
+  document.getElementById('orderNote').value = '';
+  renderCart();
+}
+
+function openPayModal(method) {
+  if (cart.length === 0) { alert('กรุณาเพิ่มรายการก่อน'); return; }
+  currentPayMethod = method;
+  cashEntered = '0';
+  document.getElementById('payModalTitle').textContent = '💳 ชำระเงิน — ' + method;
+  document.getElementById('payTotalDisp').textContent = '฿' + getTotal();
+  document.getElementById('cashInput').textContent = '0';
+  updateChangeDisplay();
+  document.getElementById('payModal').classList.add('show');
+}
+
+function closePayModal() { document.getElementById('payModal').classList.remove('show'); }
+
+function numpadPress(val) {
+  if (val === 'back') { cashEntered = cashEntered.length > 1 ? cashEntered.slice(0,-1) : '0'; }
+  else { cashEntered = cashEntered === '0' ? val : cashEntered + val; }
+  document.getElementById('cashInput').textContent = cashEntered;
+  updateChangeDisplay();
+}
+
+function updateChangeDisplay() {
+  const cash = parseInt(cashEntered) || 0;
+  const total = getTotal();
+  const change = cash - total;
+  const el = document.getElementById('changeDisplay');
+  if (cash === 0) { el.textContent = 'เงินทอน: ฿0'; el.className = 'change-display'; }
+  else if (change >= 0) { el.textContent = 'เงินทอน: ฿' + change; el.className = 'change-display positive'; }
+  else { el.textContent = 'ขาด: ฿' + Math.abs(change); el.className = 'change-display negative'; }
+}
+
+function confirmPayment() {
+  const cash = parseInt(cashEntered) || 0;
+  const total = getTotal();
+  if (currentPayMethod === 'เงินสด' && cash < total) { alert('รับเงินไม่เพียงพอ'); return; }
+  closePayModal();
+  syncOrderToSheets({
+    orderId: 'ORD-' + String(orderCounter).padStart(4,'0'),
+    table: document.getElementById('tableNum').value,
+    type: document.getElementById('orderType').value,
+    items: cart.map(i => ({ id: i.id, name: i.name, qty: i.qty })),
+    subtotal: getSubtotal(), discount, total: getTotal(),
+    payment: currentPayMethod,
+    note: document.getElementById('orderNote').value
+  });
+  showReceipt(cash);
+}
+
+function showReceipt(cashReceived) {
+  const total = getTotal();
+  const change = currentPayMethod === 'เงินสด' ? cashReceived - total : 0;
+  const table = document.getElementById('tableNum').value || '-';
+  const note = document.getElementById('orderNote').value;
+  const orderType = document.getElementById('orderType').value;
+  const now = new Date();
+  const receiptHTML = `
+    <div class="receipt-header">
+      <h3>🐄 BULLISH CAFE</h3>
+      <div style="font-size:11px;color:#888;margin-top:3px;">Healthy Coffee Time</div>
+      <div style="font-size:12px;color:#888;margin-top:4px;">${now.toLocaleString('th-TH')}</div>
+      <div style="font-size:12px;margin-top:4px;color:#4a8fe8;font-weight:600;">ออเดอร์ #${String(orderCounter).padStart(4,'0')} | ${orderType} | โต๊ะ: ${table}</div>
+    </div>
+    <div class="receipt-items">
+      ${cart.map(item => `
+        <div class="receipt-item">
+          <span>${item.name}${item.toppings&&item.toppings.length?' ['+item.toppings.map(t=>t.name).join(',')+']':''} x${item.qty}</span>
+          <span>฿${(item.unitPrice||item.price)*item.qty}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="receipt-item"><span>รวม</span><span>฿${getSubtotal()}</span></div>
+    ${discount > 0 ? `<div class="receipt-item" style="color:var(--red);"><span>ส่วนลด</span><span>-฿${discount}</span></div>` : ''}
+    <div class="receipt-item receipt-total"><span>ยอดรวม</span><span>฿${total}</span></div>
+    <div class="receipt-item"><span>ชำระโดย</span><span>${currentPayMethod}</span></div>
+    ${currentPayMethod === 'เงินสด' ? `<div class="receipt-item"><span>รับเงิน</span><span>฿${cashReceived}</span></div><div class="receipt-item"><span>เงินทอน</span><span>฿${change}</span></div>` : ''}
+    ${note ? `<div style="font-size:12px;color:#888;margin-top:8px;">หมายเหตุ: ${note}</div>` : ''}
+    <div class="receipt-thanks">ขอบคุณที่ใช้บริการค่ะ 🙏<br>Healthy Coffee Time · BULLISH CAFE</div>
+  `;
+  document.getElementById('receiptContent').innerHTML = receiptHTML;
+  document.getElementById('receiptModal').classList.add('show');
+  orderCounter++;
+}
+
+function closeReceiptModal() {
+  document.getElementById('receiptModal').classList.remove('show');
+  cart = []; discount = 0;
+  document.getElementById('discountInput').value = '';
+  document.getElementById('tableNum').value = '';
+  document.getElementById('orderNote').value = '';
+  renderCart();
+}
+
+function printReceipt() {
+  const content = document.getElementById('receiptContent').innerHTML;
+  const win = window.open('', '_blank', 'width=300,height=500');
+  win.document.write(`<html><head><title>ใบเสร็จ - Bullish Cafe</title><style>body{font-family:monospace;padding:16px;max-width:280px;} .receipt-header{text-align:center;} .receipt-item{display:flex;justify-content:space-between;margin:3px 0;font-size:13px;} .receipt-items{border-top:1px dashed #000;border-bottom:1px dashed #000;padding:6px 0;margin:6px 0;} .receipt-total{font-weight:bold;font-size:15px;} .receipt-thanks{text-align:center;color:#888;margin-top:10px;font-size:12px;}</style></head><body>${content}</body></html>`);
+  win.document.close();
+  win.print();
+}
+
+// ── Refund / Cancel Order ──────────────────────────────────
+async function openRefundModal() {
+  document.getElementById('refundModal').style.display = 'flex';
+  const listEl = document.getElementById('refundList');
+  listEl.innerHTML = '<div style="text-align:center;color:var(--ink-light);padding:20px;">⏳ กำลังโหลด...</div>';
+  try {
+    const res = await fetch(APPS_SCRIPT_URL + '?action=getTodayOrders');
+    const data = await res.json();
+    if (!data.success || !data.orders || data.orders.length === 0) {
+      listEl.innerHTML = '<div style="text-align:center;color:var(--ink-light);padding:20px;">ไม่มีออเดอร์วันนี้</div>';
+      return;
+    }
+    // Group by orderId
+    const grouped = {};
+    data.orders.forEach(function(o) {
+      if (!grouped[o.orderId]) grouped[o.orderId] = {orderId:o.orderId, time:o.time, items:[], total:o.total, payment:o.payment, cancelled:o.cancelled};
+      grouped[o.orderId].items.push(o.menuName + ' x' + o.qty);
+    });
+    listEl.innerHTML = Object.values(grouped).map(function(o) {
+      const isCancelled = o.cancelled === 'YES';
+      return `<div style="background:${isCancelled?'#fde8e8':'var(--blue-ghost)'};border-radius:10px;padding:12px;border:1px solid ${isCancelled?'#f5c6c6':'var(--border)'};">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-weight:700;font-size:13px;">${o.orderId}</span>
+          <span style="font-size:11px;color:var(--ink-light);">${o.time}</span>
+        </div>
+        <div style="font-size:12px;color:var(--ink-mid);margin-bottom:8px;">${o.items.join(', ')}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-weight:700;color:var(--blue-deep);">฿${o.total}</span>
+          ${isCancelled
+            ? '<span style="font-size:11px;color:#e04848;font-weight:600;">❌ ยกเลิกแล้ว</span>'
+            : `<button onclick="confirmRefund('${o.orderId}')" style="background:#e04848;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;">ยกเลิก/คืนเงิน</button>`
+          }
+        </div>
+      </div>`;
+    }).join('');
+  } catch(err) {
+    listEl.innerHTML = '<div style="text-align:center;color:#e04848;padding:20px;">โหลดไม่ได้ กรุณาลองใหม่</div>';
+  }
+}
+
+async function confirmRefund(orderId) {
+  if (!confirm('ยืนยันยกเลิกออเดอร์ ' + orderId + '?\nระบบจะทำเครื่องหมายยกเลิกและไม่ตัดสต็อค')) return;
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({action: 'cancelOrder', orderId: orderId})
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('✅ ยกเลิกออเดอร์ ' + orderId + ' เรียบร้อย');
+      openRefundModal(); // reload list
+    } else {
+      alert('❌ เกิดข้อผิดพลาด: ' + (data.error || 'ไม่ทราบสาเหตุ'));
+    }
+  } catch(err) {
+    alert('❌ เชื่อมต่อไม่ได้ กรุณาลองใหม่');
+  }
+}
+
+function closeRefundModal() {
+  document.getElementById('refundModal').style.display = 'none';
+}
+
+function switchTab(tab) {
+  const menuPanel = document.querySelector('.menu-panel');
+  const orderPanel = document.querySelector('.order-panel');
+  const tabMenu = document.getElementById('tabMenu');
+  const tabOrder = document.getElementById('tabOrder');
+  if (tab === 'menu') {
+    menuPanel.classList.add('active'); orderPanel.classList.remove('active');
+    tabMenu.classList.add('active'); tabOrder.classList.remove('active');
+  } else {
+    orderPanel.classList.add('active'); menuPanel.classList.remove('active');
+    tabOrder.classList.add('active'); tabMenu.classList.remove('active');
+  }
+}
+
+function updateCartBadge() {
+  const total = cart.reduce((s, i) => s + i.qty, 0);
+  const badge = document.getElementById('cartBadge');
+  const label = document.getElementById('tabOrderLabel');
+  if (!badge) return;
+  if (total > 0) { badge.style.display = 'inline'; badge.textContent = total; label.textContent = ''; }
+  else { badge.style.display = 'none'; label.textContent = 'ออเดอร์'; }
+}
+
+// Topping modal
+function addToCart(id) {
+  const item = MENU.find(i => i.id === id);
+  if (FOOD_CATS.includes(item.cat) && TOPPINGS_DATA.length > 0) {
+    pendingCartItem = item;
+    openToppingModal(item);
+  } else {
+    addToCartDirect(item, []);
+  }
+}
+
+function addToCartDirect(item, selectedToppings) {
+  const existing = cart.find(c => c.id === item.id && JSON.stringify(c.toppings) === JSON.stringify(selectedToppings||[]));
+  const toppingCost = (selectedToppings||[]).reduce((s,t) => s + t.price, 0);
+  const unitPrice = getItemPrice(item) + toppingCost;
+  if (existing) { existing.qty++; }
+  else { cart.push({...item, qty:1, unitPrice, toppings: selectedToppings||[]}); }
+  renderCart();
+}
+
+function openToppingModal(item) {
+  document.getElementById('toppingModalTitle').textContent = item.name;
+  const tops = TOPPINGS_DATA.map(t => ({ name: t.name, price: priceMode === 'app' ? t.priceApp : t.priceShop }));
+  document.getElementById('toppingOptions').innerHTML = tops.map((t,i) => `
+    <label class="topping-option">
+      <input type="checkbox" id="top_${i}">
+      <span class="topping-option-name">${t.name}</span>
+      <span class="topping-option-price ${t.price>0?'paid':''}">${t.price>0?'+฿'+t.price:'ฟรี'}</span>
+    </label>
+  `).join('');
+  document.getElementById('toppingModal').classList.add('show');
+}
+
+function confirmTopping() {
+  const tops = TOPPINGS_DATA.map(t => ({ name: t.name, price: priceMode === 'app' ? t.priceApp : t.priceShop }));
+  const selected = tops.filter((_,i) => document.getElementById('top_'+i)?.checked);
+  document.getElementById('toppingModal').classList.remove('show');
+  if (pendingCartItem) { addToCartDirect(pendingCartItem, selected); pendingCartItem = null; }
+}
+
+// Admin
+function saveData() {
+  try {
+    localStorage.setItem('toppings', JSON.stringify(toppings));
+    const customItems = MENU.filter(i => i.custom);
+    localStorage.setItem('customMenu', JSON.stringify(customItems));
+  } catch(e) {}
+}
+
+function loadSavedData() {
+  try {
+    toppings = JSON.parse(localStorage.getItem('toppings') || '[]');
+    const customMenu = JSON.parse(localStorage.getItem('customMenu') || '[]');
+    customMenu.forEach(item => { if (!MENU.find(m => m.id === item.id)) MENU.push(item); });
+    const savedPrices = JSON.parse(localStorage.getItem('savedPrices') || '{}');
+    Object.entries(savedPrices).forEach(([id, prices]) => {
+      const item = MENU.find(m => m.id == id);
+      if (item) { item.price = prices.price; item.priceApp = prices.priceApp; }
+    });
+  } catch(e) { console.warn('localStorage ไม่พร้อม'); }
+}
+
+function openAdmin() {
+  document.getElementById('adminPanel').classList.add('show');
+  renderAdminMenu(); renderToppingList(); renderPriceList();
+  const dl = document.getElementById('catList');
+  dl.innerHTML = [...new Set(MENU.map(i => i.cat))].map(c => `<option value="${c}">`).join('');
+}
+
+function closeAdmin() { document.getElementById('adminPanel').classList.remove('show'); filterItems(); }
+
+function switchAdminTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach((t,i) => {
+    const tabs = ['menu','topping','price'];
+    t.classList.toggle('active', tabs[i] === tab);
+  });
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('admin' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+}
+
+function renderAdminMenu() {
+  const q = (document.getElementById('adminSearch').value || '').toLowerCase();
+  const list = document.getElementById('adminMenuList');
+  const items = MENU.filter(i => !q || i.name.toLowerCase().includes(q));
+  list.innerHTML = items.map(item => `
+    <div class="admin-list-item">
+      <div class="admin-list-info">
+        <div class="admin-list-name">${item.name}</div>
+        <div class="admin-list-sub">${item.cat}</div>
+      </div>
+      <div class="admin-list-price">฿${item.price}<br><span style="font-size:10px;color:#888;">แอป ฿${item.priceApp||item.price}</span></div>
+      <button class="admin-btn admin-btn-danger" onclick="deleteItem(${item.id})" style="padding:5px 10px;font-size:11px;">ลบ</button>
+    </div>
+  `).join('');
+}
+
+function addNewItem() {
+  const name = document.getElementById('newItemName').value.trim();
+  const cat = document.getElementById('newItemCat').value.trim();
+  const price = parseInt(document.getElementById('newItemPrice').value) || 0;
+  const priceApp = parseInt(document.getElementById('newItemPriceApp').value) || price;
+  if (!name || !cat || !price) { alert('กรุณากรอกข้อมูลให้ครบ'); return; }
+  const newId = Math.max(...MENU.map(i => i.id)) + 1;
+  MENU.push({ id: newId, name, price, priceApp, cat, custom: true });
+  saveData();
+  document.getElementById('newItemName').value = '';
+  document.getElementById('newItemPrice').value = '';
+  document.getElementById('newItemPriceApp').value = '';
+  renderAdminMenu();
+  alert('เพิ่มเมนูแล้ว!');
+}
+
+function deleteItem(id) {
+  if (!confirm('ลบเมนูนี้?')) return;
+  const idx = MENU.findIndex(i => i.id === id);
+  if (idx > -1) MENU.splice(idx, 1);
+  saveData(); renderAdminMenu();
+}
+
+function renderToppingList() {
+  const list = document.getElementById('toppingList');
+  if (toppings.length === 0) { list.innerHTML = '<div style="color:#bbb;font-size:13px;text-align:center;padding:16px;">ยังไม่มี Topping</div>'; return; }
+  list.innerHTML = toppings.map((t, i) => `
+    <div class="topping-item">
+      <div class="topping-name">${t.name}</div>
+      <div class="topping-price">${t.price > 0 ? '+฿'+t.price : 'ฟรี'}</div>
+      <button class="admin-btn admin-btn-danger" onclick="deleteTopping(${i})" style="padding:4px 10px;font-size:11px;">ลบ</button>
+    </div>
+  `).join('');
+}
+
+function addTopping() {
+  const name = document.getElementById('newToppingName').value.trim();
+  const price = parseInt(document.getElementById('newToppingPrice').value) || 0;
+  if (!name) { alert('กรุณาใส่ชื่อ Topping'); return; }
+  toppings.push({ name, price });
+  saveData();
+  document.getElementById('newToppingName').value = '';
+  document.getElementById('newToppingPrice').value = '';
+  renderToppingList();
+}
+
+function deleteTopping(idx) {
+  toppings.splice(idx, 1);
+  saveData(); renderToppingList();
+}
+
+function renderPriceList() {
+  const q = (document.getElementById('priceSearch').value || '').toLowerCase();
+  const list = document.getElementById('priceList');
+  const items = MENU.filter(i => !q || i.name.toLowerCase().includes(q));
+  list.innerHTML = items.map(item => `
+    <div class="admin-list-item">
+      <div class="admin-list-info"><div class="admin-list-name" style="font-size:12px;">${item.name}</div></div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <input type="number" value="${item.price}" onchange="updatePrice(${item.id},'price',this.value)" style="width:60px;padding:5px;border:2px solid var(--border);border-radius:7px;font-size:12px;text-align:center;outline:none;">
+        <input type="number" value="${item.priceApp||item.price}" onchange="updatePrice(${item.id},'priceApp',this.value)" style="width:60px;padding:5px;border:2px solid var(--blue-pale);border-radius:7px;font-size:12px;text-align:center;color:var(--blue-deep);outline:none;">
+      </div>
+    </div>
+  `).join('');
+  list.insertAdjacentHTML('afterbegin', '<div style="display:flex;justify-content:flex-end;gap:40px;font-size:11px;color:#888;margin-bottom:6px;padding-right:4px;"><span>หน้าร้าน</span><span style="color:var(--blue-deep);">แอป</span></div>');
+}
+
+function updatePrice(id, field, val) {
+  const item = MENU.find(i => i.id === id);
+  if (!item) return;
+  item[field] = parseInt(val) || 0;
+  try {
+    const saved = JSON.parse(localStorage.getItem('savedPrices') || '{}');
+    saved[id] = { price: item.price, priceApp: item.priceApp };
+    localStorage.setItem('savedPrices', JSON.stringify(saved));
+  } catch(e) {}
+}
+
+function applyBulkPercent() {
+  const pct = parseFloat(document.getElementById('bulkPercent').value);
+  if (!pct) { alert('กรุณาใส่เปอร์เซ็นต์'); return; }
+  MENU.forEach(item => { item.priceApp = Math.ceil(item.price * (1 + pct/100)); });
+  try {
+    const saved = {};
+    MENU.forEach(i => { saved[i.id] = { price: i.price, priceApp: i.priceApp }; });
+    localStorage.setItem('savedPrices', JSON.stringify(saved));
+  } catch(e) {}
+  renderPriceList();
+  alert(`ปรับราคาแอปเพิ่ม ${pct}% เรียบร้อย!`);
+}
+
+loadSavedData();
+init();
+</script>
+
+<!-- Admin Panel -->
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-top">
+    <h2>⚙️ ตั้งค่าร้าน — Bullish Cafe</h2>
+    <button class="admin-close" onclick="closeAdmin()">✕ ปิด</button>
+  </div>
+  <div class="admin-tabs">
+    <button class="admin-tab active" onclick="switchAdminTab('menu')">📋 เมนู</button>
+    <button class="admin-tab" onclick="switchAdminTab('topping')">🌿 Topping</button>
+    <button class="admin-tab" onclick="switchAdminTab('price')">💰 ราคา</button>
+  </div>
+  <div class="admin-content">
+    <div class="admin-section active" id="adminMenu">
+      <div class="admin-card">
+        <h3>➕ เพิ่มเมนูใหม่</h3>
+        <div class="admin-form-row"><label>ชื่อเมนู</label><input type="text" id="newItemName" placeholder="ชื่อเมนู"></div>
+        <div class="admin-form-row"><label>หมวดหมู่</label><input type="text" id="newItemCat" placeholder="เช่น Coffee+Milk" list="catList"><datalist id="catList"></datalist></div>
+        <div class="admin-form-row"><label>ราคาร้าน</label><input type="number" id="newItemPrice" placeholder="฿"></div>
+        <div class="admin-form-row"><label>ราคาแอป</label><input type="number" id="newItemPriceApp" placeholder="฿"></div>
+        <button class="admin-btn admin-btn-primary" onclick="addNewItem()" style="width:100%;margin-top:4px;">เพิ่มเมนู</button>
+      </div>
+      <div class="admin-card">
+        <h3>📋 รายการเมนูทั้งหมด</h3>
+        <input type="text" id="adminSearch" placeholder="🔍 ค้นหาเมนู..." oninput="renderAdminMenu()" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:'Sarabun',sans-serif;margin-bottom:10px;outline:none;">
+        <div id="adminMenuList"></div>
+      </div>
+    </div>
+    <div class="admin-section" id="adminTopping">
+      <div class="admin-card">
+        <h3>➕ เพิ่ม Topping</h3>
+        <div class="admin-form-row"><label>ชื่อ</label><input type="text" id="newToppingName" placeholder="เช่น ไข่ต้ม"></div>
+        <div class="admin-form-row"><label>ราคา</label><input type="number" id="newToppingPrice" placeholder="0 = ฟรี" min="0"></div>
+        <button class="admin-btn admin-btn-primary" onclick="addTopping()" style="width:100%;margin-top:4px;">เพิ่ม Topping</button>
+      </div>
+      <div class="admin-card">
+        <h3>📋 Topping ทั้งหมด</h3>
+        <div id="toppingList"></div>
+      </div>
+    </div>
+    <div class="admin-section" id="adminPrice">
+      <div class="admin-card">
+        <h3>💰 ปรับราคาแอปทั้งหมด</h3>
+        <p style="font-size:12px;color:#888;margin-bottom:10px;">ราคาแอปแพงกว่าหน้าร้านกี่ %</p>
+        <div class="admin-form-row"><label>เพิ่ม %</label><input type="number" id="bulkPercent" placeholder="เช่น 10 = +10%"></div>
+        <button class="admin-btn admin-btn-success" onclick="applyBulkPercent()" style="width:100%;margin-top:4px;">ปรับราคาแอปทั้งหมด</button>
+      </div>
+      <div class="admin-card">
+        <h3>✏️ แก้ราคารายเมนู</h3>
+        <input type="text" id="priceSearch" placeholder="🔍 ค้นหาเมนู..." oninput="renderPriceList()" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:'Sarabun',sans-serif;margin-bottom:10px;outline:none;">
+        <div id="priceList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Topping Modal -->
+<div class="topping-modal" id="toppingModal">
+  <div class="topping-sheet">
+    <div class="topping-sheet-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+      <h3 id="toppingModalTitle"></h3>
+      <button onclick="confirmTopping()" style="background:none;border:none;color:#aaa;font-size:13px;cursor:pointer;padding:4px 8px;border-radius:8px;font-family:'Sarabun',sans-serif;">ข้าม →</button>
+    </div>
+    <div class="sub">🌿 เลือก Topping เพิ่มเติม (ไม่บังคับ)</div>
+    <div id="toppingOptions" style="max-height:50vh;overflow-y:auto;"></div>
+    <button class="topping-confirm" onclick="confirmTopping()">✓ เพิ่มลงออเดอร์</button>
+  </div>
+</div>
+
+</body>
+</html>
